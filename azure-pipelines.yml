@@ -1,0 +1,48 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- none
+
+pool:
+  vmImage: cicd
+
+- task: TerraformInstaller@1
+  inputs:
+    terraformVersion: 'latest'
+
+- task: TerraformTask@5
+  inputs:
+    provider: 'azurerm'
+    command: 'init'
+    workingDirectory: 'environment/dev'
+    backendServiceArm: 'Connection'
+    backendAzureRmOverrideSubscriptionID: '1f832fa0-5b4f-410c-9650-a4ef5bc628d3'
+    backendAzureRmResourceGroupName: 'mk-rg'
+    backendAzureRmStorageAccountName: 'wwwwwwwertyuiolvdlskv'
+    backendAzureRmContainerName: 'yoyo'
+    backendAzureRmKey: 'terraform.tfstate'
+
+- task: TerraformTask@5
+  inputs:
+    provider: 'azurerm'
+    command: 'validate'
+    workingDirectory: '''environment/dev'''
+
+- task: TerraformTask@5
+  inputs:
+    provider: 'azurerm'
+    command: 'plan'
+    workingDirectory: 'environment/dev'
+    environmentServiceNameAzureRM: 'Connection'
+    environmentAzureRmOverrideSubscriptionID: '1f832fa0-5b4f-410c-9650-a4ef5bc628d3'
+
+- task: TerraformTask@5
+  inputs:
+    provider: 'azurerm'
+    command: 'apply'
+    workingDirectory: 'environment/dev'
+    environmentServiceNameAzureRM: 'Connection'
+    environmentAzureRmOverrideSubscriptionID: '1f832fa0-5b4f-410c-9650-a4ef5bc628d3'
